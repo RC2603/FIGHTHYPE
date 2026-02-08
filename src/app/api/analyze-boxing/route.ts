@@ -153,8 +153,6 @@ export async function POST(request: NextRequest) {
       const zai = await getZAI()
       console.log('ZAI instance obtained')
 
-      const zai = await getZAI()
-console.log('ZAI instance obtained')
 
 // Step 1: Content detection - Check if video contains boxing
 console.log('Step 1: Detecting boxing content...')

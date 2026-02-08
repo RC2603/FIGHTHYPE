@@ -505,10 +505,10 @@ export default function BoxingAnalysisApp() {
                 <div className="bg-gray-800/50 rounded-xl p-4">
                   <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Defense</div>
                   <div className="text-sm font-semibold">{analysis.defense}</div>
+                </div>
               </div>
             </div>
             )}
-          </div>
           </div>
         )}
       </main>
