@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #00ff9d;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00cc7d;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        pre {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .success { color: #00ff9d; }
+        .error { color: #ff5555; }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Testing Tool</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Simple POST Request</h2>
+        <p>Sends a simple JSON POST to test if API routing works</p>
+        <button onclick="testSimplePost()">Test Simple POST</button>
+        <pre id="result1">Results will appear here...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Video Upload</h2>
+        <p>Upload a video file to test the full upload and analysis flow</p>
+        <input type="file" id="videoInput" accept="video/*">
+        <button onclick="testVideoUpload()">Upload & Analyze</button>
+        <pre id="result2">Results will appear here...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Test API Endpoint</h2>
+        <p>Test the /api/test endpoint</p>
+        <button onclick="testTestApi()">Test /api/test</button>
+        <pre id="result3">Results will appear here...</pre>
+    </div>
+
+    <script>
+        async function testSimplePost() {
+            const resultEl = document.getElementById('result1');
+            resultEl.textContent = 'Sending request...';
+
+            try {
+                const response = await fetch('/api/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ test: 'data', timestamp: Date.now() })
+                });
+
+                const data = await response.json();
+                resultEl.innerHTML = `<span class="success">Success!</span>\nStatus: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">Error:</span>\n${error.message}`;
+            }
+        }
+
+        async function testVideoUpload() {
+            const resultEl = document.getElementById('result2');
+            const fileInput = document.getElementById('videoInput');
+
+            if (!fileInput.files[0]) {
+                resultEl.innerHTML = `<span class="error">Please select a video file first</span>`;
+                return;
+            }
+
+            resultEl.textContent = 'Uploading and analyzing...';
+
+            const formData = new FormData();
+            formData.append('video', fileInput.files[0]);
+
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch('/api/analyze-boxing', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const elapsedTime = Date.now() - startTime;
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultEl.innerHTML = `<span class="success">Success!</span>\nTime: ${elapsedTime}ms\nStatus: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultEl.innerHTML = `<span class="error">Failed!</span>\nTime: ${elapsedTime}ms\nStatus: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                const elapsedTime = Date.now() - startTime;
+                resultEl.innerHTML = `<span class="error">Error:</span>\nTime: ${elapsedTime}ms\n${error.message}`;
+            }
+        }
+
+        async function testTestApi() {
+            const resultEl = document.getElementById('result3');
+            resultEl.textContent = 'Sending request...';
+
+            try {
+                const response = await fetch('/api/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ test: 'test endpoint' })
+                });
+
+                const data = await response.json();
+                resultEl.innerHTML = `<span class="success">Success!</span>\nStatus: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">Error:</span>\n${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
