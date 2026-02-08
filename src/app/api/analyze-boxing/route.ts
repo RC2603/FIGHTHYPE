@@ -153,9 +153,70 @@ export async function POST(request: NextRequest) {
       const zai = await getZAI()
       console.log('ZAI instance obtained')
 
-      // Skip detection for faster processing in this environment
-      console.log('Starting full boxing analysis with AI...')
-      const analysisPrompt = `Analyze this boxing training video in detail and provide a comprehensive assessment.
+      const zai = await getZAI()
+console.log('ZAI instance obtained')
+
+// Step 1: Content detection - Check if video contains boxing
+console.log('Step 1: Detecting boxing content...')
+const detectionPrompt = `You are a content detection system. Analyze this video and determine if it contains boxing training or fighting activity.
+
+Answer ONLY with one word:
+- "YES" if the video shows: boxing training, sparring, bag work, pad work, shadow boxing, or any boxing/martial arts fighting
+- "NO" if the video shows: unrelated content like cooking, talking, walking, nature, animals, or any non-combat sports
+
+Be strict. If there are no visible punches, kicks, or fighting techniques, answer "NO".`
+
+try {
+  const detectionResponse = await zai.chat.completions.createVision({
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: detectionPrompt },
+          { type: 'video_url', video_url: { url: base64Video } }
+        ]
+      }
+    ],
+    thinking: { type: 'disabled' }
+  })
+
+  const detectionResult = detectionResponse.choices[0]?.message?.content?.toUpperCase().trim() || 'NO'
+  console.log('Detection result:', detectionResult)
+
+  // If not boxing content, return immediately
+  if (detectionResult !== 'YES') {
+    console.log('Not boxing content detected')
+    return NextResponse.json({
+      success: true,
+      analysis: {
+        isBoxingContent: false,
+        summary: 'This video does not contain boxing or martial arts content. Please upload a boxing training video for analysis.',
+        totalStrikes: 0,
+        averagePower: 0,
+        peakPower: 0,
+        speed: 0,
+        accuracy: 0,
+        technique: [],
+        strengths: [],
+        improvements: [],
+        trainingMode: 'N/A',
+        intensity: 'N/A',
+        footwork: 'N/A',
+        defense: 'N/A',
+        overallRating: 0
+      }
+    })
+  }
+
+  console.log('Boxing content confirmed, proceeding with analysis...')
+} catch (detectionError) {
+  console.error('Detection failed, proceeding with analysis:', detectionError)
+  // Continue with full analysis if detection fails
+}
+
+// Step 2: Full boxing analysis
+console.log('Step 2: Starting full boxing analysis with AI...')
+const analysisPrompt = `Analyze this boxing training video...
 
       Please analyze and extract:
       1. Total Strikes: Count all visible punches thrown throughout the video

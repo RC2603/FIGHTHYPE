@@ -384,17 +384,28 @@ export default function BoxingAnalysisApp() {
                 )}
               </div>
 
+              {/* Non-Boxing Content Warning */}
               {!analysis.isBoxingContent && (
-                <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                  <p className="text-yellow-400 text-sm">
-                    ⚠️ This video may not contain boxing content. Results may be inaccurate.
-                  </p>
-                </div>
-              )}
-            </div>
+                <div className="mt-4 p-6 bg-red-500/10 border border-red-500/30 rounded-xl">
+                <div className="flex items-start gap-3">
+                <div className="text-red-400 text-2xl">🥊</div>
+                <div>
+                <h3 className="text-red-400 font-bold mb-2">Not a Boxing Video</h3>
+                <p className="text-red-300 text-sm mb-3">
+                {analysis.summary || 'This video does not contain boxing or martial arts content.'}
+              </p>
+                <p className="text-gray-400 text-xs">
+          Please upload a boxing training video (bag work, sparring, pad work, or shadow boxing) for AI analysis.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+</div>
 
-            {/* Stats Panel */}
-            <div className="lg:w-96 bg-gray-900/50 border-l border-gray-800 p-4 lg:p-6 overflow-y-auto max-h-[50vh] lg:max-h-none">
+      {/* Stats Panel - Only show if boxing content */}
+      {analysis.isBoxingContent && (
+  <div className="lg:w-96 bg-gray-900/50 border-l border-gray-800 p-4 lg:p-6 overflow-y-auto max-h-[50vh] lg:max-h-none">
               <div className="mb-6">
                 <h3 className="text-xl font-bold mb-2">Combat Analysis</h3>
                 <p className="text-sm text-gray-400">AI-powered insights</p>
@@ -494,9 +505,10 @@ export default function BoxingAnalysisApp() {
                 <div className="bg-gray-800/50 rounded-xl p-4">
                   <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Defense</div>
                   <div className="text-sm font-semibold">{analysis.defense}</div>
-                </div>
               </div>
             </div>
+            )}
+          </div>
           </div>
         )}
       </main>
