@@ -53,8 +53,8 @@ export default function BoxingAnalysisApp() {
       return
     }
 
-    if (file.size > 100 * 1024 * 1024) {
-      setError('File too large. Max 100MB')
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File too large. Max 5MB')
       return
     }
 
@@ -304,7 +304,7 @@ export default function BoxingAnalysisApp() {
                   Drag & drop or click to select
                 </p>
                 <p className="text-sm text-gray-500">
-                  MP4, MOV, WEBM, AVI • Max 100MB
+                  MP4, MOV, WEBM, AVI • Max 5MB
                 </p>
               </div>
             </div>
